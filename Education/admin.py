@@ -1,14 +1,9 @@
 from django.contrib import admin
-from  Education.models import Employee, Module, Course
+from .models import Employee, Module, Course
 
-@admin.register(Employee)
-class EmployeeAdmin(admin.ModelAdmin):
-    pass
+admin.site.register(Employee)
 
-@admin.register(Module)
-class ModuleAdmin(admin.ModelAdmin):
-    pass
+admin.site.register(Module)
 
-@admin.register(Course)
-class CourseAdmin(admin.ModelAdmin):
-    pass
+admin.site.register(Course)
+

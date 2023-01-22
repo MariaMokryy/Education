@@ -8,8 +8,10 @@ class Employee(models.Model):
     lastname = models.TextField
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
 
+
 class Module(models.Model):
     name = models.TextField(unique=True)
+
 
 class Course(models.Model):
     name = models.TextField(unique=True)
