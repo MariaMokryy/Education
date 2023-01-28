@@ -6,4 +6,3 @@ admin.site.register(Employee)
 admin.site.register(Module)
 
 admin.site.register(Course)
-

@@ -30,7 +30,6 @@ class Module(models.Model):
 
 class Course(models.Model):
     name = models.TextField(unique=True)
-    code = models.TextField(unique=True)
     module = models.ForeignKey(Module, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):

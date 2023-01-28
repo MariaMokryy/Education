@@ -12,22 +12,21 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-
+import environ
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+SECRET_KEY = os.environ.get('SECRET_KEY', env('SECRET_KEY'))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^%c252we@#vhh^^j$)k+ay$cj25xhzq3lw^s8w5hkl^k8+!dl0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = env('DEBUG_VALUE')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'rest_framework',
-    'rest_framework_simplejwt.token_blacklist'
+    'rest_framework_simplejwt.token_blacklist',
+    'django_crontab'
 ]
 
 MIDDLEWARE = [
@@ -82,10 +82,10 @@ WSGI_APPLICATION = 'education.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'production_db',
-        'USER': 'user',
-        'PASSWORD': 'password',
-        'HOST': 'db.example.com',
+        'NAME': env('PG_DATABASE_NAME'),
+        'USER': env('PG_USER'),
+        'PASSWORD': env('PG_PASSWORD'),
+        'HOST': 'db',
         'PORT': ''
     }
 }
@@ -138,7 +138,7 @@ REST_FRAMEWORK = {
         ],
     'DEFAULT_PERMISSION_CLASSES':
         [
-            'rest_framework.permissions.IsAuthenticated'
+            # 'rest_framework.permissions.IsAuthenticated'
         ],
     'DEFAULT_AUTHENTICATION_CLASSES':
         [
@@ -148,7 +148,7 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -175,8 +175,12 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=1),
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-from .local_settings import *
+CRONJOBS = [
+    ('*/1 * * * *', 'main.cron.update_models', '>> /cron/django_cron.log 2>&1')
+]
+
+# from .local_settings import *
