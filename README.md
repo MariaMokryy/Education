@@ -1,5 +1,10 @@
+# Education
 
-#INIT DATABASE
+Сервис для интегрциии Moodle с системами учета рабочего времени сервисного отдела.
+Основная задача - учет компетенций инженеров при работе с техникой для последующего начисления премии.
+
+
+# INIT DATABASE
 
 To initialize db run:
 
@@ -8,7 +13,7 @@ To initialize db run:
 3) docker-compose exec web python manage.py createsuperuser 
 
 
-#CRON#
+# CRON
 
 To add all defined jobs from CRONJOBS to crontab run:
     docker exec web python manage.py crontab add 

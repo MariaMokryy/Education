@@ -39,3 +39,17 @@ class Course(models.Model):
         verbose_name = 'курс'
         verbose_name_plural = 'курсы'
 
+
+class CompletionStatus(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    grade = models.FloatField()
+    completed = models.BooleanField(null=True)
+
+    def __str__(self):
+        return self.employee.lastname + ' ' + self.employee.firstname + ': ' + str(self.grade)
+
+    class Meta:
+        verbose_name = 'запись о прохождении курса'
+        verbose_name_plural = 'записи о прохождении курсов'
+
