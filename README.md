@@ -27,4 +27,8 @@ Removing all defined jobs:
 Inspect the log file to see cronjob outputs:
     docker exec web cat /cron/django_cron.log
 
+# REPORTS
+To build grade report in .xlsx run:
+    docker exec web python manage.py build_report
+
 

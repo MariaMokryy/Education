@@ -5,7 +5,7 @@ import datetime
 
 def update_models():
     # to check the correct execution cron-job, uncomment next line (see in /cron/django_cron.log):
-    # print('cron job in ' + str(datetime.datetime.now()))
+    print('cron job in ' + str(datetime.datetime.now()))
 
     GET_MODULES_API = 'http://school.tmbk.local/webservice/rest/server.php?wstoken=78e11184c6d1ea686efb457448e69baa&wsfunction=core_course_get_categories&moodlewsrestformat=json'
 
@@ -43,39 +43,40 @@ def update_models():
 
 
 
-    emp1 = Employee(id=141, code='ahtamovartem', email='AhtamovArtem@tmbk.ru', firstname='Артем', lastname='Ахкямов')
-    emp1.save()
-
-    emp2 = Employee(id=107, code='ovodnevaleksandr', email='OvodnevAleksandr@tmbk.ru', firstname='Александр', lastname='Оводнев')
-    emp2.save()
-
-
-
     GET_COURSES_LIST_BY_USER = 'http://school.tmbk.local/webservice/rest/server.php?wstoken=78e11184c6d1ea686efb457448e69baa&wsfunction=gradereport_overview_get_course_grades&moodlewsrestformat=json&'
     GET_COURSE_COMPLETION_BY_USER = 'http://school.tmbk.local/webservice/rest/server.php?wstoken=78e11184c6d1ea686efb457448e69baa&wsfunction=core_completion_get_course_completion_status&moodlewsrestformat=json&'
 
+    # email_list = Employee.objects.values_list('email')
+
     employees = Employee.objects.all()
     for employee in employees:
-        user_course_list = requests.get(GET_COURSES_LIST_BY_USER + 'userid=' + str(employee.id))
-        current_user_completions = CompletionStatus.objects.filter(employee=employee)
+        moodle_user = requests.get('http://school.tmbk.local/webservice/rest/server.php?wstoken=78e11184c6d1ea686efb457448e69baa&wsfunction=core_user_get_users&moodlewsrestformat=json&criteria[0][key]=email&criteria[0][value]=' + employee.email).json()
+        for user in moodle_user.get('users'):
+            moodle_user_id = user.get('id')
 
-        for course in user_course_list.json().get('grades'):
-            course_entry = Course.objects.get(id=course.get('courseid'))
-            try:
-                course_completion_entry = current_user_completions.get(course=course_entry)
-            except CompletionStatus.DoesNotExist:
-                course_completion_entry = CompletionStatus(course=course_entry, employee=employee)
+            user_course_list = requests.get(GET_COURSES_LIST_BY_USER + 'userid=' + str(moodle_user_id))
+            current_user_completions = CompletionStatus.objects.filter(employee=employee)
 
-            course_completion_entry.grade = float(course.get('grade').replace(',', '.'))
+            for course in user_course_list.json().get('grades'):
+                course_entry = Course.objects.get(id=course.get('courseid'))
+                try:
+                    course_completion_entry = current_user_completions.get(course=course_entry)
+                except CompletionStatus.DoesNotExist:
+                    course_completion_entry = CompletionStatus(course=course_entry, employee=employee)
 
-            is_completed_course = requests.get(GET_COURSE_COMPLETION_BY_USER + 'courseid=' + str(course.get('courseid')) + '&userid=' + str(employee.id)).json()
+                if course.get('grade') == '-':
+                    course_completion_entry.grade = 0.0
+                else:
+                    course_completion_entry.grade = float(course.get('grade').replace(',', '.'))
 
-            if is_completed_course.get('errorcode') == 'nocriteriaset':
-                course_completion_entry.completed = None
-            else:
-                course_completion_entry.completed = is_completed_course.get('completionstatus').get('completed')
+                is_completed_course = requests.get(GET_COURSE_COMPLETION_BY_USER + 'courseid=' + str(course.get('courseid')) + '&userid=' + str(moodle_user_id)).json()
 
-            course_completion_entry.save()
+                if is_completed_course.get('errorcode') == 'nocriteriaset':
+                    course_completion_entry.completed = None
+                else:
+                    course_completion_entry.completed = is_completed_course.get('completionstatus').get('completed')
+
+                course_completion_entry.save()
 
 
 

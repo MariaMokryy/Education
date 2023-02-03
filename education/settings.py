@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'main',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    'django_crontab'
+    'django_crontab',
+    'import_export'
 ]
 
 MIDDLEWARE = [
@@ -180,7 +181,7 @@ SIMPLE_JWT = {
 }
 
 CRONJOBS = [
-    ('*/1 * * * *', 'main.cron.update_models', '>> /cron/django_cron.log 2>&1')
+    ('* */12 * * *', 'main.cron.update_models', '>> /cron/django_cron.log 2>&1')
 ]
 
 # from .local_settings import *
