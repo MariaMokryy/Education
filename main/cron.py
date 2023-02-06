@@ -5,7 +5,7 @@ import datetime
 
 def update_models():
     # to check the correct execution cron-job, uncomment next line (see in /cron/django_cron.log):
-    print('cron job in ' + str(datetime.datetime.now()))
+    # print('cron job in ' + str(datetime.datetime.now()))
 
     GET_MODULES_API = 'http://school.tmbk.local/webservice/rest/server.php?wstoken=78e11184c6d1ea686efb457448e69baa&wsfunction=core_course_get_categories&moodlewsrestformat=json'
 

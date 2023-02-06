@@ -1,16 +1,28 @@
 version: '3.9'
 
 services:
-  web:
-    container_name: web
+  django:
+    container_name: django
     build: .
     env_file: .env
-    ports:
-      - 8000:8000
+#    entrypoint: /education_app/docker-entrypoint.sh
+#    ports:
+#      - 8000:8000
     volumes:
       - .:/education_app
     depends_on:
       - db
+
+  nginx:
+    container_name: nginx-container
+    build: ./nginx
+    ports:
+      - 8000:8000
+    volumes:
+      - ./log:/var/log/nginx
+    depends_on:
+      - django
+
   db:
     container_name: db
     image: postgres:15

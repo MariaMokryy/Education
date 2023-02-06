@@ -18,6 +18,12 @@ RUN touch /cron/django_cron.log
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-CMD service cron start && python manage.py runserver 0.0.0.0:8000
+RUN apt-get update && \
+    apt-get install -y build-essential python vim net-tools && \
+    pip install uwsgi
+
+
+CMD service cron start && uwsgi --ini /education_app/education.uwsgi.ini
+#CMD service cron start && python manage.py runserver 0.0.0.0:8000
 
 
