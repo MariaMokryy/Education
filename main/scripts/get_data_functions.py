@@ -1,4 +1,4 @@
-from main.models import CompletionStatus, Course
+from main.models import CompletionStatus, Module
 
 
 def get_grades():
@@ -9,7 +9,7 @@ def get_grades():
     report_data = [{
         'branch': list_grades[0].employee.branch.name,
         'full_name': list_grades[0].employee.lastname + ' ' + list_grades[0].employee.firstname,
-        'courses': {}
+        'modules': {}
     }]
 
     for i in range(1, len(list_grades)):
@@ -17,35 +17,51 @@ def get_grades():
             report_data.append({
                 'branch': list_grades[i].employee.branch.name,
                 'full_name': list_grades[i].employee.lastname + ' ' + list_grades[i].employee.firstname,
-                'courses': {}
+                'modules': {}
             })
 
         if list_grades[i].completed:
-            report_data[-1]['courses'].update(
-                {list_grades[i].course.name: 'ПРОЙДЕН (' + str(list_grades[i].grade) + '%)'})
+            report_data[-1]['modules'].update(
+                {list_grades[i].module.name: 'ПРОЙДЕН (' + str(list_grades[i].grade) + '%)'})
         else:
-            report_data[-1]['courses'].update(
-                {list_grades[i].course.name: 'НЕ ПРОЙДЕН (' + str(list_grades[i].grade) + '%)'})
+            report_data[-1]['modules'].update(
+                {list_grades[i].module.name: 'НЕ ПРОЙДЕН (' + str(list_grades[i].grade) + '%)'})
 
     return report_data
 
 
-def get_module_courses():
-    courses_pattern_dict = {}
+def get_category_modules():
+    modules_pattern_dict = {}
 
-    for course in list(Course.objects.order_by('module')):
-        module_name = '' if (course.module is None) else course.module.name
-        if module_name in courses_pattern_dict:
-            courses_pattern_dict[module_name].append(course.name)
+    for module in list(Module.objects.order_by('course__category_id', 'name')):
+        category_name = '' if (module.course.category is None) else module.course.category.name
+        if category_name in modules_pattern_dict:
+            modules_pattern_dict[category_name].append(module.name)
         else:
-            courses_pattern_dict.update({module_name: [course.name]})
+            modules_pattern_dict.update({category_name: [module.name]})
 
-    return courses_pattern_dict
+    return modules_pattern_dict
+
+    # courses_pattern_dict = {}
+    #
+    # for course in list(Course.objects.order_by('module')):
+    #     module_name = '' if (course.module is None) else course.module.name
+    #     if module_name in courses_pattern_dict:
+    #         courses_pattern_dict[module_name].append(course.name)
+    #     else:
+    #         courses_pattern_dict.update({module_name: [course.name]})
+    #
+    # return courses_pattern_dict
 
 
-def get_enumerate_courses():
-    courses = []
-    for course in list(Course.objects.order_by('module')):
-        courses.append(course)
+def get_enumerate_modules():
+    modules = []
+    for module in list(Module.objects.order_by('course__category_id', 'name')):
+        modules.append(module)
 
-    return courses
+    return modules
+    # courses = []
+    # for course in list(Course.objects.order_by('module')):
+    #     courses.append(course)
+    #
+    # return courses

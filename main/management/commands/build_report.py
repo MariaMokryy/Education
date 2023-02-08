@@ -1,6 +1,6 @@
 import xlsxwriter
 from django.core.management.base import BaseCommand
-from main.scripts.get_data_functions import get_grades, get_module_courses, get_enumerate_courses
+from main.scripts.get_data_functions import get_grades, get_category_modules, get_enumerate_modules
 
 
 class Command(BaseCommand):
@@ -19,7 +19,7 @@ class Command(BaseCommand):
             'font_name': 'Arial',
         })
 
-        modules_style = workbook.add_format({
+        categories_style = workbook.add_format({
             'bg_color': '#B4F0C4',
             'color': 'black',
             'align': 'center',
@@ -29,7 +29,7 @@ class Command(BaseCommand):
             'font_name': 'Arial',
         })
 
-        courses_style = workbook.add_format({
+        modules_style = workbook.add_format({
             'bg_color': '#C0F0E8',
             'color': 'black',
             'align': 'center',
@@ -61,34 +61,34 @@ class Command(BaseCommand):
         worksheet.merge_range(0, 0, 1, 0, 'Филиал', header)
         worksheet.merge_range(0, 1, 1, 1, 'Фамилия, Имя', header)
 
-        courses_data = get_module_courses()
+        modules_data = get_category_modules()
         report_data = get_grades()
 
         cur_column = 2
-        for module in courses_data.keys():
-            if len(courses_data[module]) == 1:
-                worksheet.write(0, cur_column, module, modules_style)
+        for module in modules_data.keys():
+            if len(modules_data[module]) == 1:
+                worksheet.write(0, cur_column, module, categories_style)
             else:
-                worksheet.merge_range(0, cur_column, 0, cur_column + len(courses_data[module]) - 1, module, modules_style)
+                worksheet.merge_range(0, cur_column, 0, cur_column + len(modules_data[module]) - 1, module, categories_style)
 
-            for course in courses_data[module]:
-                worksheet.write(1, cur_column, course, courses_style)
+            for module in modules_data[module]:
+                worksheet.write(1, cur_column, module, modules_style)
                 cur_column += 1
 
-        # worksheet.set_column(2, cur_column, 20)
-        # worksheet.set_row(1, 50)
-        worksheet.autofit()
+        worksheet.set_column(2, cur_column, 20)
+        worksheet.set_row(1, 70)
+        # worksheet.autofit()
 
-        all_courses = get_enumerate_courses()
+        all_modules = get_enumerate_modules()
         for row in range(0, len(report_data)):
             worksheet.write(row + 2, 0, report_data[row]['branch'], standard_style)
             worksheet.write(row + 2, 1, report_data[row]['full_name'], standard_style)
-            user_courses = report_data[row]['courses']
+            user_modules = report_data[row]['modules']
 
-            for index in range(0, len(all_courses)):
+            for index in range(0, len(all_modules)):
                 cell_text = ''
-                if all_courses[index].name in user_courses:
-                    cell_text = user_courses[all_courses[index].name]
+                if all_modules[index].name in user_modules:
+                    cell_text = user_modules[all_modules[index].name]
                 worksheet.write(row + 2, index + 2, cell_text, standard_style)
 
         worksheet.conditional_format(2, 2, len(report_data) + 2, cur_column,

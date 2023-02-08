@@ -2,12 +2,9 @@ version: "3.9"
 
 services:
   django:
-    #container_name: django
+    container_name: django
     build: .
     env_file: .env
-    #    entrypoint: /education_app/docker-entrypoint.sh
-    #    ports:
-    #      - 8000:8000
     volumes:
       - uwsgi_data:/tmp/uwsgi/
       - .:/education_app
@@ -15,7 +12,7 @@ services:
       - db
 
   nginx:
-    container_name: nginx-container
+    container_name: nginx
     build: ./nginx
     ports:
       - 8000:8000

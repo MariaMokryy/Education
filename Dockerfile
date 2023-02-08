@@ -22,8 +22,7 @@ RUN apt-get update && \
     apt-get install -y build-essential python vim net-tools && \
     pip install uwsgi
 
-
-CMD service cron start && uwsgi --ini /education_app/education.uwsgi.ini
+CMD python manage.py collectstatic && service cron start && uwsgi --ini /education_app/education.uwsgi.ini
 #CMD service cron start && python manage.py runserver 0.0.0.0:8000
 
 

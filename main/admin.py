@@ -5,14 +5,20 @@ from import_export.fields import Field
 from import_export.widgets import ForeignKeyWidget
 from import_export.admin import ImportExportModelAdmin
 
-admin.site.register(Module)
+admin.site.register(Category)
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'module')
+    list_display = ('name', 'category')
 admin.site.register(Course, CourseAdmin)
 
+
+class ModuleAdmin(admin.ModelAdmin):
+    list_display = ('name', 'course')
+admin.site.register(Module, ModuleAdmin)
+
+
 class CompletionStatusAdmin(admin.ModelAdmin):
-    list_display = ('employee', 'course', 'completed', 'grade')
+    list_display = ('employee', 'module', 'completed', 'grade')
 admin.site.register(CompletionStatus, CompletionStatusAdmin)
 
 class MachineTypeAdmin(admin.ModelAdmin):

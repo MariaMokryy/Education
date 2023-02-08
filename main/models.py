@@ -30,21 +30,20 @@ class Employee(models.Model):
         verbose_name_plural = 'сотрудники'
 
 
-
-class Module(models.Model):
-    name = models.TextField(unique=True, verbose_name='Название модуля')
+class Category(models.Model):
+    name = models.TextField(unique=True, verbose_name='Название категории')
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = 'модуль'
-        verbose_name_plural = 'модули'
+        verbose_name = 'категория'
+        verbose_name_plural = 'категории'
 
 
 class Course(models.Model):
     name = models.TextField(unique=True, verbose_name='Название курса')
-    module = models.ForeignKey(Module, null=True, on_delete=models.SET_NULL, verbose_name='модуль курса')
+    category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL, verbose_name='Категория курса')
 
     def __str__(self):
         return self.name
@@ -54,18 +53,30 @@ class Course(models.Model):
         verbose_name_plural = 'курсы'
 
 
+class Module(models.Model):
+    name = models.TextField(unique=True, verbose_name='Название модуля')
+    course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE, verbose_name='Курс модуля')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'модуль'
+        verbose_name_plural = 'модули'
+
+
 class CompletionStatus(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
+    module = models.ForeignKey(Module, null=True, on_delete=models.CASCADE, verbose_name='Модуль')
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name='Сотрудник')
-    grade = models.FloatField(verbose_name='Оценка за курс')
-    completed = models.BooleanField(null=True, verbose_name='Курс пройден')
+    grade = models.DecimalField(verbose_name='Оценка за модуль', max_digits=5, decimal_places=2)
+    completed = models.BooleanField(null=True, verbose_name='Модуль пройден')
 
     def __str__(self):
         return self.employee.lastname + ' ' + self.employee.firstname + ': ' + str(self.grade)
 
     class Meta:
-        verbose_name = 'запись о прохождении курса'
-        verbose_name_plural = 'записи о прохождении курсов'
+        verbose_name = 'запись о прохождении модуля'
+        verbose_name_plural = 'записи о прохождении модулей'
 
 
 class MachineType(models.Model):

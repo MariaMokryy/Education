@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets, permissions
-from .models import Employee, Course, Module
+from .models import Employee, Course, Category
 from .serializers import EmployeeSerializer, CourseSerializer, ModuleSerializer
 
 
@@ -15,7 +15,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 
 class ModuleViewSet(viewsets.ModelViewSet):
-    queryset = Module.objects.all()
+    queryset = Category.objects.all()
     serializer_class = ModuleSerializer
 
 
