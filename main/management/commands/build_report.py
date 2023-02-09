@@ -77,7 +77,6 @@ class Command(BaseCommand):
 
         worksheet.set_column(2, cur_column, 20)
         worksheet.set_row(1, 70)
-        # worksheet.autofit()
 
         all_modules = get_enumerate_modules()
         for row in range(0, len(report_data)):

@@ -42,17 +42,6 @@ def get_category_modules():
 
     return modules_pattern_dict
 
-    # courses_pattern_dict = {}
-    #
-    # for course in list(Course.objects.order_by('module')):
-    #     module_name = '' if (course.module is None) else course.module.name
-    #     if module_name in courses_pattern_dict:
-    #         courses_pattern_dict[module_name].append(course.name)
-    #     else:
-    #         courses_pattern_dict.update({module_name: [course.name]})
-    #
-    # return courses_pattern_dict
-
 
 def get_enumerate_modules():
     modules = []
@@ -60,8 +49,3 @@ def get_enumerate_modules():
         modules.append(module)
 
     return modules
-    # courses = []
-    # for course in list(Course.objects.order_by('module')):
-    #     courses.append(course)
-    #
-    # return courses
