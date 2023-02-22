@@ -1,0 +1,68 @@
+.forwardButton {
+    border-radius: 10px;
+    border: none;
+    background: #FDAE47;
+    color: white;
+    font-family: Arial;
+    font-size: 16px;
+    margin-left: 20px;
+    position: absolute;
+    bottom: 10%;
+    width: 20%;
+    height: 35px;
+    text-align: center;
+    transition: .5s;
+    align-items: center;
+}
+
+.forwardButton:hover {
+    width: 22%;
+}
+
+.backButton {
+    border-radius: 50px;
+    border: none;
+    background: #FDAE47;
+    color: white;
+    height: 40px;
+    width: 40px;
+    margin: 20px;
+    transition: .5s;
+}
+
+.backButton:hover {
+    width: 55px;
+}
+
+.rightArrow {
+    height: 18px;
+    float: right;
+    margin-right: 5px;
+    margin-top: 4px;
+}
+
+.leftArrow {
+    height: 20px;
+    transform: rotate(180deg);
+}
+
+
+.navigation__btn {
+    background: transparent;
+    color: white;
+    padding: .2rem 1rem;
+    border: 3px solid #FFFFFF;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.navigation__btn:hover {
+    background: #fff;
+    color: #2A2F35;
+}
+
+.navigation__btn + .navigation__btn {
+    margin-left: 2rem;
+}
+

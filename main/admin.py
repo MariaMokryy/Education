@@ -7,27 +7,55 @@ from import_export.admin import ImportExportModelAdmin
 
 admin.site.register(Category)
 
+
+class CourseLevelAdmin(admin.ModelAdmin):
+    list_display = ('name', 'award')
+
+
+admin.site.register(CourseLevel, CourseLevelAdmin)
+
+
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category')
+    list_display = ('name', 'category', 'level')
+
+
 admin.site.register(Course, CourseAdmin)
 
 
 class ModuleAdmin(admin.ModelAdmin):
     list_display = ('name', 'course')
+
+
 admin.site.register(Module, ModuleAdmin)
 
 
-class CompletionStatusAdmin(admin.ModelAdmin):
+class ModuleCompletionStatusAdmin(admin.ModelAdmin):
     list_display = ('employee', 'module', 'completed', 'grade')
-admin.site.register(CompletionStatus, CompletionStatusAdmin)
+
+
+admin.site.register(ModuleCompletionStatus, ModuleCompletionStatusAdmin)
+
+
+class CourseCompletionStatusAdmin(admin.ModelAdmin):
+    list_display = ('employee', 'course', 'completed', 'grade')
+
+
+admin.site.register(CourseCompletionStatus, CourseCompletionStatusAdmin)
+
 
 class MachineTypeAdmin(admin.ModelAdmin):
     list_display = ('code', 'name')
+
+
 admin.site.register(MachineType, MachineTypeAdmin)
+
 
 class MachineModelAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'machine_type')
+
+
 admin.site.register(MachineModel, MachineModelAdmin)
+
 
 class EmployeeResource(resources.ModelResource):
 
@@ -50,8 +78,8 @@ class EmployeeAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_classes = [EmployeeResource]
     list_display = ('code', 'email', 'firstname', 'lastname', 'branch')
 
-admin.site.register(Employee, EmployeeAdmin)
 
+admin.site.register(Employee, EmployeeAdmin)
 
 
 class BranchResource(resources.ModelResource):
@@ -64,6 +92,7 @@ class BranchResource(resources.ModelResource):
 class BranchAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_classes = [BranchResource]
     list_display = ('code', 'name')
+
 
 admin.site.register(Branch, BranchAdmin)
 

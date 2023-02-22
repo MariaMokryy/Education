@@ -42,12 +42,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'django_crontab',
-    'import_export'
+    'import_export',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -56,6 +58,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'education.urls'
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {
@@ -86,7 +90,7 @@ DATABASES = {
         'NAME': env('PG_DATABASE_NAME'),
         'USER': env('PG_USER'),
         'PASSWORD': env('PG_PASSWORD'),
-        'HOST': 'db',
+        'HOST': env('PG_HOST'),
         'PORT': ''
     }
 }
@@ -125,8 +129,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/django_static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'django_static')
+
+MEDIA_URL = '/django_media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'django_media')
+
 
 
 # Default primary key field type
@@ -174,6 +182,7 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
     'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+    "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.MyTokenObtainPairSerializer",
 
     'JTI_CLAIM': 'jti',
 
@@ -183,7 +192,7 @@ SIMPLE_JWT = {
 }
 
 CRONJOBS = [
-    ('* */12 * * *', 'main.cron.update_models', '>> /cron/django_cron.log 2>&1')
+    ('*/10 * * * *', 'main.cron.update_models', '>> /cron/django_cron.log 2>&1')
 ]
 
 # from .local_settings import *

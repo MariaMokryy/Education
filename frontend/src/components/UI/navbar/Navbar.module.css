@@ -1,0 +1,25 @@
+.navbar {
+    width: 100vw;
+    height: 90px;
+}
+
+.logout__btn {
+    background: transparent;
+    border: none;
+
+}
+
+.logout__img {
+    height: 35px;
+
+}
+
+.logo {
+    padding: 15px;
+    height: 80px;
+}
+
+
+.navbar__links {
+
+}

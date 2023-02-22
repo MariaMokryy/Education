@@ -6,7 +6,7 @@ import datetime
 
 def update_models():
     # to check the correct execution cron-job, uncomment next line (see in /cron/django_cron.log):
-    # print('cron job in ' + str(datetime.datetime.now()))
+    print('cron job in ' + str(datetime.datetime.now()))
 
     token = 'wstoken=' + env('WSTOKEN')
 
@@ -72,6 +72,7 @@ def update_models():
     GET_USER_DATA = 'http://school.tmbk.local/webservice/rest/server.php?' + token + '&wsfunction=core_user_get_users&moodlewsrestformat=json&criteria[0][key]=email&criteria[0][value]='
     GET_MODULES_GRADES = 'http://school.tmbk.local/webservice/rest/server.php?' + token + '&wsfunction=gradereport_user_get_grade_items&moodlewsrestformat=json&courseid='
     GET_MODULES_COMPLETIONS = 'http://school.tmbk.local/webservice/rest/server.php?' + token + '&wsfunction=core_completion_get_activities_completion_status&moodlewsrestformat=json&courseid='
+    GET_COURSE_COMPLETION_BY_USER = 'http://school.tmbk.local/webservice/rest/server.php?' + token + '&wsfunction=core_completion_get_course_completion_status&moodlewsrestformat=json&'
 
     employees = Employee.objects.all()
     for employee in employees:
@@ -84,9 +85,36 @@ def update_models():
             for course in user_course_list.json().get('grades'):
                 try:
                     course_entry = Course.objects.get(id=course.get('courseid'))
+
+                    # если такой курс есть в таблице, то обновляем запись о прохождении этого курса для текущего пользователя
+                    current_user_completions = CourseCompletionStatus.objects.filter(employee=employee)
+                    try:
+                        course_completion_entry = current_user_completions.get(course=course_entry)
+                    except CourseCompletionStatus.DoesNotExist:
+                        course_completion_entry = CourseCompletionStatus(course=course_entry, employee=employee)
+
+                    if course.get('grade') == '-':
+                        course_completion_entry.grade = 0.0
+                    else:
+                        course_completion_entry.grade = float(course.get('grade').replace(',', '.'))
+
+                    is_completed_course = requests.get(
+                        GET_COURSE_COMPLETION_BY_USER + 'courseid=' + str(course.get('courseid')) + '&userid=' + str(
+                            employee.id)).json()
+
+
+                    if is_completed_course.get('completionstatus') is None:
+                        course_completion_entry.completed = None
+                    else:
+                        course_completion_entry.completed = is_completed_course.get('completionstatus').get('completed')
+
+                    course_completion_entry.save()
+                    #################################################################
+
                     all_course_modules = list(Module.objects.filter(course=course_entry))
                 except Course.DoesNotExist:
                     continue
+
 
                 for module in all_course_modules:
                     user_modules_list.update({module.id: {'grade': '0,00', 'completed': 0}})
@@ -101,14 +129,14 @@ def update_models():
                     if status.get('modname') == 'scorm' and status.get('instance') in user_modules_list:
                         user_modules_list[status.get('instance')]['completed'] = status.get('state')
 
-            current_user_completions = CompletionStatus.objects.filter(employee=employee)
+            current_user_completions = ModuleCompletionStatus.objects.filter(employee=employee)
 
             for module_id in user_modules_list.keys():
                 module_entry = Module.objects.get(id=module_id)
                 try:
                     module_completion_entry = current_user_completions.get(module=module_entry)
-                except CompletionStatus.DoesNotExist:
-                    module_completion_entry = CompletionStatus(module=module_entry, employee=employee)
+                except ModuleCompletionStatus.DoesNotExist:
+                    module_completion_entry = ModuleCompletionStatus(module=module_entry, employee=employee)
 
                 if user_modules_list[module_id]['grade'] == '-':
                     module_completion_entry.grade = 0.0

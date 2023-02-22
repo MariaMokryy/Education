@@ -1,9 +1,9 @@
-from main.models import CompletionStatus, Module
+from main.models import ModuleCompletionStatus, Module
 
 
 def get_grades():
     list_grades = list(
-        CompletionStatus.objects.order_by('employee__branch__name', 'employee__lastname', 'employee__firstname',
+        ModuleCompletionStatus.objects.order_by('employee__branch__name', 'employee__lastname', 'employee__firstname',
                                           'employee__code'))
 
     report_data = [{

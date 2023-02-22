@@ -8,19 +8,25 @@ services:
     volumes:
       - uwsgi_data:/tmp/uwsgi/
       - .:/education_app
-      - /static:/education_app/static
+      - /django_static:/education_app/django_static
+      - /django_media:/education_app/django_media
     depends_on:
       - db
 
   nginx:
     container_name: nginx
-    build: ./nginx
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+#    build: ./nginx
     ports:
       - 8000:8000
     volumes:
       - ./log:/var/log/nginx
       - uwsgi_data:/tmp/uwsgi/
-      - /static:/education_app/static
+      - /django_static:/education_app/django_static
+      - /django_media:/education_app/django_media
+      - ./frontend/build:/usr/share/nginx/html
     depends_on:
       - django
 
@@ -40,4 +46,5 @@ services:
 volumes:
   uwsgi_data:
   postgres_data:
-  static:
+  django_static:
+  django_media:

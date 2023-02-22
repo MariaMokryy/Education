@@ -28,10 +28,14 @@ class Employee(models.Model):
     class Meta:
         verbose_name = 'сотрудник'
         verbose_name_plural = 'сотрудники'
+        permissions = [
+            ("read_branch_employees", "Can view data only self branch employees"),
+        ]
 
 
 class Category(models.Model):
     name = models.TextField(unique=True, verbose_name='Название категории')
+    image = models.ImageField(null=True, blank=True, upload_to='categories/', height_field=None, width_field=None, verbose_name='Изображение')
 
     def __str__(self):
         return self.name
@@ -41,9 +45,22 @@ class Category(models.Model):
         verbose_name_plural = 'категории'
 
 
+class CourseLevel(models.Model):
+    name = models.TextField(unique=True, verbose_name='Название уровня')
+    award = models.IntegerField(null=False, default=0, verbose_name='Размер премии (руб.)')
+
+    def __str__(self):
+        return self.name + ': ' + str(self.award) + ' руб.'
+
+    class Meta:
+        verbose_name = 'уровень прохождения'
+        verbose_name_plural = 'уровни прохождения'
+
+
 class Course(models.Model):
     name = models.TextField(unique=True, verbose_name='Название курса')
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL, verbose_name='Категория курса')
+    level = models.ForeignKey(CourseLevel, null=True, on_delete=models.SET_NULL, verbose_name='Уровень прохождения курса')
 
     def __str__(self):
         return self.name
@@ -65,11 +82,19 @@ class Module(models.Model):
         verbose_name_plural = 'модули'
 
 
-class CompletionStatus(models.Model):
+class ModuleCompletionStatus(models.Model):
     module = models.ForeignKey(Module, null=True, on_delete=models.CASCADE, verbose_name='Модуль')
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name='Сотрудник')
     grade = models.DecimalField(verbose_name='Оценка за модуль', max_digits=5, decimal_places=2)
     completed = models.BooleanField(null=True, verbose_name='Модуль пройден')
+
+    @property
+    def get_module_name(self):
+        return self.module.name
+
+    @property
+    def get_course(self):
+        return self.module.course.id
 
     def __str__(self):
         return self.employee.lastname + ' ' + self.employee.firstname + ': ' + str(self.grade)
@@ -77,6 +102,40 @@ class CompletionStatus(models.Model):
     class Meta:
         verbose_name = 'запись о прохождении модуля'
         verbose_name_plural = 'записи о прохождении модулей'
+        permissions = [
+            ("read_self_module_records", "Can view self module completions"),
+            ("read_branch_employees_module_records", "Can view branch employees module completions"),
+        ]
+
+
+class CourseCompletionStatus(models.Model):
+    course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE, verbose_name='Курс')
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name='Сотрудник')
+    grade = models.DecimalField(verbose_name='Оценка за курс', max_digits=5, decimal_places=2)
+    completed = models.BooleanField(null=True, verbose_name='Курс пройден')
+
+    @property
+    def get_award(self):
+        return self.course.level.award
+
+    @property
+    def get_category(self):
+        return self.course.category.id
+
+    @property
+    def get_course_name(self):
+        return self.course.name
+
+    def __str__(self):
+        return self.employee.lastname + ' ' + self.employee.firstname + ': ' + str(self.grade)
+
+    class Meta:
+        verbose_name = 'запись о прохождении курса'
+        verbose_name_plural = 'записи о прохождении курсов'
+        permissions = [
+            ("read_self_course_records", "Can view self course completions"),
+            ("read_branch_employees_course_records", "Can view branch employees course completions"),
+        ]
 
 
 class MachineType(models.Model):
