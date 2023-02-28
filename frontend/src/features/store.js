@@ -3,6 +3,7 @@ import authReducer from "./auth/authSlice";
 import unitsReducer from "./educationUnits/unitsSlice";
 import usersReducer from "./users/usersSlice";
 import completionsReducer from "./completions/completionsSlice"
+import uiStatesReducer from './uiStates/uiStatesSlice'
 
 export default configureStore({
     reducer: {
@@ -10,5 +11,6 @@ export default configureStore({
         units: unitsReducer,
         users: usersReducer,
         completions: completionsReducer,
+        uiStates: uiStatesReducer,
     }
 })

@@ -1,6 +1,7 @@
 import Login from "../pages/Login";
 import About from "../pages/About";
-import UnitsProgress from "../pages/employee/UnitsProgress";
+import EmployeeUnitsProgress from "../pages/employee/EmployeeUnitsProgress";
+import SupervisorUnitsProgress from "../pages/supervisor/SupervisorUnitsProgress";
 
 
 // export const privateRoutes = [
@@ -12,12 +13,12 @@ import UnitsProgress from "../pages/employee/UnitsProgress";
 
 export const employeeRoutes = [
     {path: '/about', component: <About/>, exact: true},
-    {path: '/units', component: <UnitsProgress/>, exact: true}
+    {path: '/units', component: <EmployeeUnitsProgress/>, exact: true}
 
 ]
 
 export const supervisorRoutes = [
-    {path: '/about', component: <About/>, exact: true}
+    {path: '/units', component: <SupervisorUnitsProgress/>, exact: true}
 ]
 
 
