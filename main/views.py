@@ -38,6 +38,11 @@ class CourseCompletionStatusViewSet(viewsets.ModelViewSet):
     serializer_class = CourseCompletionStatusSerializer
 
 
+class BranchViewSet(viewsets.ModelViewSet):
+    queryset = Branch.objects.all()
+    serializer_class = BranchSerializer
+
+
 @api_view(['GET'])
 def get_branch_employees(request):
     if request.user.has_perm('main.read_branch_employees'):

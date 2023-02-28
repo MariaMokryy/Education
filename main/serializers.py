@@ -15,7 +15,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    completion_award = serializers.IntegerField(source='level.award')
+    completion_award = serializers.ReadOnlyField(source='get_award_value')
 
     class Meta:
         model = Course
@@ -28,9 +28,16 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class ModuleSerializer(serializers.ModelSerializer):
+    category = serializers.ReadOnlyField(source='get_category')
+
     class Meta:
         model = Module
-        fields = "__all__"
+        fields = [
+            'id',
+            'name',
+            'course',
+            'category'
+        ]
 
 
 class ModuleCompletionStatusSerializer(serializers.ModelSerializer):
@@ -68,3 +75,8 @@ class CourseCompletionStatusSerializer(serializers.ModelSerializer):
             'course_name'
         ]
 
+
+class BranchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Branch
+        fields = "__all__"

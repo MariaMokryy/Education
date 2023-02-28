@@ -29,4 +29,18 @@ export default class UsersService {
             });
     }
 
+
+    static async getBranches() {
+        return fetchWithAuth(API_URL + '/branch/', {
+            method: 'GET',
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    const data = response.json()
+                    return Promise.resolve(data);
+                }
+                return Promise.reject();
+            });
+    }
+
 }

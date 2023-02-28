@@ -5,18 +5,29 @@
     color: white;
     font-family: Arial;
     font-size: 16px;
-    margin-left: 20px;
-    position: absolute;
-    bottom: 10%;
-    width: 20%;
+    /*margin-left: 20px;*/
+    /*position: absolute;*/
+    /*bottom: 10%;*/
+    width: 100%;
     height: 35px;
     text-align: center;
     transition: .5s;
     align-items: center;
 }
 
+.forwardButton > .rightArrow {
+    transition: .3s;
+    opacity: 0;
+    width: 0;
+}
+
 .forwardButton:hover {
-    width: 22%;
+    width: 125%;
+}
+
+.forwardButton:hover > .rightArrow {
+    opacity: 100%;
+    width: 9px;
 }
 
 .backButton {
@@ -28,6 +39,17 @@
     width: 40px;
     margin: 20px;
     transition: .5s;
+}
+
+.backButton > span {
+    transition: .3s;
+    opacity: 0;
+    /*display: none;*/
+}
+
+.backButton:hover > span {
+    opacity: 100;
+    /*display: flex;*/
 }
 
 .backButton:hover {
@@ -50,11 +72,12 @@
 .navigation__btn {
     background: transparent;
     color: white;
-    padding: .2rem 1rem;
+    padding: 5px 10px;
     border: 3px solid #FFFFFF;
     border-radius: 20px;
     font-weight: 600;
     transition: .3s;
+    margin-left: 12px !important;
 }
 
 .navigation__btn:hover {
@@ -62,7 +85,72 @@
     color: #2A2F35;
 }
 
-.navigation__btn + .navigation__btn {
-    margin-left: 2rem;
+.optionsList{
+    display: flex;
+    position: absolute;
+    right: 0;
+    flex-direction: column;
+    transition: .3s;
+    width: inherit;
+    width: 100%;
+}
+
+.dropdownButtonTitle {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    vertical-align: baseline;
+    border-top: 3px solid #ffffff;
+    border-left: 3px solid #ffffff;
+    border-bottom: 3px solid #ffffff;
+    border-right: none;
+    color: #2A2F35;
+    font-weight: bold;
+    padding: 5px 10px;
+    background: white;
+    width: 80%;
+    margin-bottom: 0;
+}
+
+.dropdownButtonArrow {
+    border-top: 3px solid #ffffff;
+    border-left: none;
+    border-bottom: 3px solid #ffffff;
+    border-right: 3px solid #ffffff;;
+    color: #FFFFFF;
+    font-weight: bold;
+    padding: 5px 10px;
+    background: transparent;
+    width: 20%;
+    margin-bottom: 0;
+}
+
+.dropdownButton {
+    width: max-content;
+    border-radius: 20px;
+    position: relative;
+    width: 100%;
+    margin-bottom: 0;
+    z-index: 90;
+}
+
+.optionButton {
+    text-align: start;
+    background: #d9d9d9;
+    color: #505760;
+    font-weight: bold;
+    border: none;
+    padding: 5px 10px;
+    transition: .3s;
+    margin-bottom: 0;
+}
+
+.optionButton:last-of-type {
+    border-radius: 0 0 20px 20px;
+}
+
+.optionButton:hover {
+    background-color: #FDAE47;
+    color: #2A2F35;
 }
 
