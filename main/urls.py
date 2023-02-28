@@ -20,6 +20,9 @@ course_completion_router.register(r'course_completions', views.CourseCompletionS
 module_completion_router = routers.SimpleRouter()
 module_completion_router.register(r'module_completions', views.ModuleCompletionStatusViewSet)
 
+branch_router = routers.SimpleRouter()
+branch_router.register(r'branch', views.BranchViewSet)
+
 
 urlpatterns = [
     path('', include(employee_router.urls)),
@@ -28,6 +31,7 @@ urlpatterns = [
     path('', include(module_router.urls)),
     path('', include(course_completion_router.urls)),
     path('', include(module_completion_router.urls)),
+    path('', include(branch_router.urls)),
 
 
     path('employee/branch', views.get_branch_employees),

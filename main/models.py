@@ -62,6 +62,10 @@ class Course(models.Model):
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL, verbose_name='Категория курса')
     level = models.ForeignKey(CourseLevel, null=True, on_delete=models.SET_NULL, verbose_name='Уровень прохождения курса')
 
+    @property
+    def get_award_value(self):
+        return self.level.award
+
     def __str__(self):
         return self.name
 
@@ -73,6 +77,10 @@ class Course(models.Model):
 class Module(models.Model):
     name = models.TextField(unique=True, verbose_name='Название модуля')
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE, verbose_name='Курс модуля')
+
+    @property
+    def get_category(self):
+        return self.course.category.id
 
     def __str__(self):
         return self.name

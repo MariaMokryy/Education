@@ -2,9 +2,7 @@ import React, {useEffect, useState} from 'react';
 import BackButton from "../../button/BackButton";
 import './../../../../App.css'
 import {
-    selectCoursesCompletions,
-    selectModulesCompletions,
-    set_courses_completions, set_modules_completions
+    selectCoursesCompletions, selectModulesCompletions, set_courses_completions, set_modules_completions
 } from '../../../../features/completions/completionsSlice'
 import CourseProgress from "./CourseProgress";
 import ModuleProgress from "./ModuleProgress";
@@ -20,76 +18,73 @@ const ExpandCategoryCard = ({divRef, collapseCard, category}) => {
     const modulesCompletions = useSelector(selectModulesCompletions)
     const [selectedCourse, setSelectedCourse] = useState({})
     const [currentModules, setCurrentModules] = useState([])
-    const dispatch = useDispatch()
-
-
-    const [fetchData, isLoading] = useFetch(async () => {
-        let data = await CompletionsService.getSelfCourseCompletions()
-        dispatch(set_courses_completions(data['courses_completions']))
-
-
-        data = await CompletionsService.getSelfModuleCompletions()
-        dispatch(set_modules_completions(data['modules_completions']))
-    })
-
-    useEffect(() => {
-        fetchData()
-    }, [])
+    const [cardOpened, setCardOpened] = useState(false)
 
 
     useEffect(() => {
         setCurrentModules(modulesCompletions.filter(module => module.course === selectedCourse.course))
     }, [selectedCourse])
 
+    useEffect(() => {
+        setSelectedCourse(coursesCompletions[0])
+        setCardOpened(true)
+    }, [])
+
 
     function getTotalAward() {
         let total = 0
-        {coursesCompletions.map(course => {
-            if (course.completed)
-                total += course.award
-        })
+        {
+            coursesCompletions.map(course => {
+                if (course.completed) total += course.award
+            })
         }
         return total
     }
 
-
     return (
-        <div ref={divRef} className='expandedCard px-2'>
-            {isLoading &&
-            <div style={{display: 'flex', justifyContent: 'center', marginTop: 50}}><Loader/></div>
-            }
+        <div ref={divRef} className='expandedCard px-3 mt-4'>
             <div className="d-flex flex-column w-100">
-                <div className="row justify-content-between align-items-center pe-4">
-                    <div className="col-auto d-flex align-items-center px-3">
+                {/*Заголовок, кнопка выйти*/}
+                <div className="row justify-content-between align-items-center sticky-top px-0 pt-3 pe-3">
+                    <div className="col-auto d-flex align-items-center">
                         <BackButton onClick={() => collapseCard()}/>
-                        <span className="col-auto h1" style={{color: "white"}}>{category.name}</span>
+                        <span className="col-auto h2 ms-2" style={{color: "white"}}>{category.name}</span>
                     </div>
-                    <div className="col-auto h3 bold px-1 py-0 d-flex align-items-center totalReward"
+                    <div className="col-auto h3 bold px-1 py-0 d-flex align-items-center justify-content-center totalReward"
                          style={{color: '#8cc06d'}}>+ {getTotalAward()} ₽
                     </div>
                 </div>
-                <div className="row ">
-                    <div className='col-6 expandedCard__courses px-4'>
-                        {coursesCompletions.map(course =>
-                            <CourseProgress onClick={() => setSelectedCourse(course)} key={course.id}
-                                            course={course}/>
-                        )}
+                {/*Тело карточки*/}
+                {<div className="row">
+                    <div className='col-6 expandedCard__courses px-4 d-flex flex-column'>
+                        {coursesCompletions.map(course => <CourseProgress onClick={() => setSelectedCourse(course)} key={course.id}
+                                                                          course={course} isSelected={course === selectedCourse}/>)}
                     </div>
-                    <div className='col-6 px-4'>
+                    <div className='col-6 px-4 h-100'>
                         <div className="expandedCard__activities row">
-                            <h3 className={"text-light text-center mt-2 mb-0"}>{selectedCourse.course_name}</h3>
-                            {currentModules.map(module =>
-                                <ModuleProgress key={module.id} module={module}/>
-                            )}
+                            <div className={"d-flex justify-content-between bg-header-linear pt-2 sticky-top px-4"}>
+                                <div className="col-10">
+                                    <h4 className={"text-light text-center mb-0 align-items-start"} style={{textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap"}} title={selectedCourse.course_name}>{selectedCourse.course_name}</h4>
+                                </div>
+                                <div className="col-2 d-flex justify-content-end align-items-baseline">
+                                        <span className={"h4 bold align-items-center mb-0"} style={{color: selectedCourse.completed ? "#8CC06D" : "#DD5757"}}>
+                                            {Math.round(selectedCourse.grade)}%
+                                        </span>
+                                </div>
+                            </div>
+                            <div className={"d-flex align-items-start flex-wrap"}>
+                                {currentModules.map(module => <ModuleProgress key={module.id} module={module} cardOpened={cardOpened}/>)}
+                            </div>
                         </div>
 
                     </div>
-                </div>
+
+                </div>}
+
             </div>
 
 
-        </div>
-    );
+        </div>);
 };
 
 export default ExpandCategoryCard;
