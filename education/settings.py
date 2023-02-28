@@ -192,7 +192,7 @@ SIMPLE_JWT = {
 }
 
 CRONJOBS = [
-    ('*/10 * * * *', 'main.cron.update_models', '>> /cron/django_cron.log 2>&1')
+    ('* */12 * * *', 'main.cron.update_models', '>> /cron/django_cron.log 2>&1')
 ]
 
 # from .local_settings import *
