@@ -4,16 +4,18 @@ import {fetchWithAuth} from "../_helpers_/commands";
 export default class UnitsService {
 
     static async getAllCategories() {
-        return fetchWithAuth(API_URL + '/category/', {
+
+       return fetchWithAuth(API_URL + '/category/', {
             method: 'GET',
         })
-            .then((response) => {
-                if (response.status === 200) {
-                    const data = response.json()
-                    return Promise.resolve(data);
-                }
-                return Promise.reject();
-            });
+           .then((response) => {
+               if (response.status === 200) {
+                   const data = response.json()
+                   return Promise.resolve(data);
+               }
+               return Promise.reject();
+           });
+
     }
 
     static async getAllCourses() {

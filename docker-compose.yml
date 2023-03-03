@@ -8,8 +8,8 @@ services:
     volumes:
       - uwsgi_data:/tmp/uwsgi/
       - .:/education_app
-      - /django_static:/education_app/django_static
-      - /django_media:/education_app/django_media
+      - django_static:/education_app/django_static
+      - django_media:/education_app/django_media
     depends_on:
       - db
 
@@ -24,8 +24,8 @@ services:
     volumes:
       - ./log:/var/log/nginx
       - uwsgi_data:/tmp/uwsgi/
-      - /django_static:/education_app/django_static
-      - /django_media:/education_app/django_media
+      - django_static:/education_app/django_static
+      - django_media:/education_app/django_media
       - ./frontend/build:/usr/share/nginx/html
     depends_on:
       - django
